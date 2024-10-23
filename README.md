@@ -35,6 +35,8 @@ Other Features/Improvement of this Kernel:
 1. Support USB Serial (CH340/FTDI/PL2303/OTI6858/TI/SPCP8X5/QT2/UPD78F0730/CP210X).
 2. Support EROFS.
 3. F2FS realtime discard enabled for better TRIM the flash.
+4. Support CANBus and USB CAN adapter (like CANable).
+5. Support LZ4, LZ4HC, ZSTD compression algorithms for ZRAM.
 
 ## 中文
 该repo (`android14-lineage21-mod` 分支)主要基于[Lineage OS 21 xiaomi sm8250 kernel source](https://github.com/LineageOS/android_kernel_xiaomi_sm8250)。
@@ -76,6 +78,8 @@ Release里的编译好的内核成品由`android14-lineage21-mod`分支编译，
 1. 支持USB串口驱动（CH340/FTDI/PL2303/OTI6858/TI/SPCP8X5/QT2/UPD78F0730/CP210X）
 2. 支持EROFS
 3. F2FS开启了realtime discard以更好的TRIM闪存
+4. 支持 CANBus 和 USB CAN （如 CANable）适配器（一些折腾嵌入式的可能会喜欢这个）
+5. zRAM 支持 LZ4、LZ4HC、ZSTD 压缩算法
 
 # How to build
 1. Prepair the basic build environment. 
