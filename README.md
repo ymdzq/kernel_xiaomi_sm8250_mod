@@ -3,7 +3,7 @@
 [中文](#中文)
 
 ## English
-This repo (`android14-lineage22-mod` branch) is based on [Lineage OS 22.1 xiaomi sm8250 kernel source](https://github.com/LineageOS/android_kernel_xiaomi_sm8250).
+This repo (`android15-lineage22-mod` branch) is based on [Lineage OS 22.1 xiaomi sm8250 kernel source](https://github.com/LineageOS/android_kernel_xiaomi_sm8250).
 
 Originally this repo (`android12-stable-mod` or `android14-stable-mod` branch) is fork from [UtsavBalar1231's repo](https://github.com/UtsavBalar1231/kernel_xiaomi_sm8250), but the `android14-stable` branch has freeze problem when the device sleep for a while or wake up. So now I switched to lineage22 codebase. The MIUI features code and some parts of the drivers is still copied from UtsavBalar1231's branch.
 
@@ -15,7 +15,7 @@ For using the SukiSU, you can install the SukiSU manager APK from [SukiSU Github
 
 (The devices affected by the "1% battery bug" are: alioth, apollo, lmi, thyme, umi, pipa. Because they all use the PM8150, aka Qualcomm fuel gauge GEN4. For the other devices are not affected by that bug, you can use this kernel for KernelSU purpose, as a replacement of the orginal stock kernel. Also, as the people tested, this kernel NoKernelSU version is good for applying [APatch](https://github.com/bmax121/APatch)).
 
-The pre-built kernel image/zip is built on the `android14-lineage22-mod` branch. It should works on both stock MIUI and third-party AOSP based Android 11-14 ROMs. You are welcomed to give feedback (Issues/Pull Requests)!
+The pre-built kernel image/zip is built on the `android15-lineage22-mod` branch. It should works on both stock MIUI and third-party AOSP based Android 11-15 ROMs. You are welcomed to give feedback (Issues/Pull Requests)!
 
 Note: The zip does not include the `dtbo.img` and it will not replace your `dtbo` partition. It is recommanded to keep the stock `dtbo` or the `dtbo` from your third-party rom (If the builder comfirmed it works well). Since there are some problems with the `dtbo.img` which built from this source, one of them is the screen will suddently goes to the highest brightness when shut try to shut off the screen in the lock screen. If you had flashed any other third-party kernels, and you got some weird problem, you should keep an eye to check your `dtbo` has been replaced or not. 
 
@@ -44,7 +44,7 @@ Other Features/Improvement of this Kernel:
 5. Support LZ4, LZ4HC, ZSTD compression algorithms for ZRAM.
 
 ## 中文
-该repo (`android14-lineage22-mod` 分支)主要基于[Lineage OS 22.1 xiaomi sm8250 kernel source](https://github.com/LineageOS/android_kernel_xiaomi_sm8250)。
+该repo (`android15-lineage22-mod` 分支)主要基于[Lineage OS 22.1 xiaomi sm8250 kernel source](https://github.com/LineageOS/android_kernel_xiaomi_sm8250)。
 
 原来这个repo(即`android12-stable-mod`/`android14-stable-mod`分支)是fork自[UtsavBalar1231的仓库](https://github.com/UtsavBalar1231/kernel_xiaomi_sm8250)，但切到`android14-stable`分支的时候，发现那套代码有睡死问题（202408的几个release），所以现在切到了基于lineage22的代码来搞。MIUI特性的代码以及部分的设备驱动抠自UtsavBalar1231的仓库。
 
@@ -54,7 +54,7 @@ Other Features/Improvement of this Kernel:
 
 （其中受“1%电量bug”影响的设备有：alioth, apollo, lmi, thyme, umi, pipa，因为它们都用了PM8150即高通的GEN4电量计。其它不受此bug影响的设备大可把这个内核当成个带SukiSU & SUSFS的官核平替，如果你想找一个带KernelSU的内核的话。并且据大家测试，该内核不带KernelSU版本可以应用[APatch](https://github.com/bmax121/APatch)）
 
-Release里的编译好的内核成品由`android14-lineage22-mod`分支编译，应当能在原版MIUI和第三方的基于AOSP的各种Android11-14的ROM上使用。欢迎大家尝试并反馈（提Issue或Pull Requests）！酷友们到[酷安的这个帖子](https://www.coolapk.com/feed/56813047)讨论或反馈，也可以给我私信反馈！
+Release里的编译好的内核成品由`android15-lineage22-mod`分支编译，应当能在原版MIUI和第三方的基于AOSP的各种Android11-15的ROM上使用。欢迎大家尝试并反馈（提Issue或Pull Requests）！酷友们到[酷安的这个帖子](https://www.coolapk.com/feed/56813047)讨论或反馈，也可以给我私信反馈！
 
 注意：该内核的zip包不包含`dtbo.img`，并且不会刷你的dtbo分区。推荐使用原厂的`dtbo`，或者来自第三方系统包自带的dtbo（如果原作者确认那好用的话）。因为该源码build出来的`dtbo.img`有些小问题，比如在锁屏界面上尝试熄屏时，屏幕会突然闪一下到最高亮度。如果你刷过其它第三方内核，或者遇到一些奇怪的问题，建议检查一下你的`dtbo`是否被替换过。
 
