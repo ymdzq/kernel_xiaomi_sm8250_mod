@@ -2267,7 +2267,7 @@ static void ptrace_do_notify(int signr, int exit_code, int why)
 	ptrace_stop(exit_code, why, 1, &info);
 }
 
-void ptrace_notify(int exit_code)
+void ptrace_notify(int exit_code, unsigned long message)  // 添加第二个参数
 {
 	BUG_ON((exit_code & (0x7f | ~0xffff)) != SIGTRAP);
 	if (unlikely(current->task_works))
