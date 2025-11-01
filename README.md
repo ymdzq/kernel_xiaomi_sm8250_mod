@@ -156,12 +156,12 @@ Join ApartTUSITU's QQ Group: [700675046](https://qm.qq.com/q/Md7nXA3Toa).
 
    注意：`build.sh` 中启用了 `ccache`，路径是 `$HOME/.cache/ccache_mikernel`。可修改或删除。  
 
-2. 下载 [ZyC-Clang v15](https://github.com/ZyCromerZ/Clang/releases/tag/15.0.7-20251111-release) 工具链:  
+2. 下载 [ZyC-Clang v22](https://github.com/ZyCromerZ/Clang/releases/tag/22.0.0git-20250924-release) 工具链:  
    ```
-   mkdir zyc-clang
-   cd zyc-clang
-   wget https://github.com/ZyCromerZ/Clang/releases/download/15.0.7-20251111-release/Clang-15.0.7-20251111.tar.gz
-   tar -zxvf Clang-15.0.7-20251111.tar.gz
+   mkdir ZyC-clang
+   cd ZyC-clang
+   wget https://github.com/ZyCromerZ/Clang/releases/download/22.0.0git-20250924-release/Clang-22.0.0git-20250924.tar.gz
+   tar -zxvf Clang-22.0.0git-20250924.tar.gz
    cd ..
    ```
 
@@ -207,12 +207,12 @@ Join ApartTUSITU's QQ Group: [700675046](https://qm.qq.com/q/Md7nXA3Toa).
 
    Note: `ccache` is enabled in `build.sh` (`$HOME/.cache/ccache_mikernel`). You may remove/modify it.  
 
-2. Download [ZyC-Clang v15](https://github.com/ZyCromerZ/Clang/releases/tag/15.0.7-20251111-release) toolchain:  
+2. Download [ZyC-Clang v22](https://github.com/ZyCromerZ/Clang/releases/tag/22.0.0git-20250924-release) toolchain:  
    ```
-   mkdir zyc-clang
-   cd zyc-clang
-   wget https://github.com/ZyCromerZ/Clang/releases/download/15.0.7-20251111-release/Clang-15.0.7-20251111.tar.gz
-   tar -zxvf Clang-15.0.7-20251111.tar.gz
+   mkdir ZyC-clang
+   cd ZyC-clang
+   wget https://github.com/ZyCromerZ/Clang/releases/download/22.0.0git-20250924-release/Clang-22.0.0git-20250924.tar.gz
+   tar -zxvf Clang-22.0.0git-20250924.tar.gz
    cd ..
    ```
 

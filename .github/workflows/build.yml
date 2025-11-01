@@ -63,13 +63,13 @@ jobs:
           kernel-ccache-${{ inputs.device }}-
           kernel-ccache-
 
-    - name: Setup Toolchain (ZyC-Clang 15)
+    - name: Setup Toolchain (ZyC-Clang 22)
       # 对应 Manual Build 第 2 步
       run: |
-        mkdir -p $HOME/zyc-clang
-        cd $HOME/zyc-clang
-        wget -q https://github.com/ZyCromerZ/Clang/releases/download/15.0.7-20251111-release/Clang-15.0.7-20251111.tar.gz
-        tar -zxvf Clang-15.0.7-20251111.tar.gz
+        mkdir -p $HOME/ZyC-clang
+        cd $HOME/ZyC-clang
+        wget -q https://github.com/ZyCromerZ/Clang/releases/download/22.0.0git-20250924-release/Clang-22.0.0git-20250924.tar.gz
+        tar -zxvf Clang-22.0.0git-20250924.tar.gz
 
     - name: Build Kernel
       run: |

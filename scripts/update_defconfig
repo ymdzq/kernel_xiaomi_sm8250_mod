@@ -12,10 +12,10 @@ export krnl_top
 export krnl_config_dir
 
 # Set compiler PATH
-if [[ -d $HOME/zyc-clang/bin ]]; then
-	PATH=$HOME/zyc-clang/bin:$PATH
+if [[ -d $HOME/ZyC-clang/bin ]]; then
+	PATH=$HOME/ZyC-clang/bin:$PATH
 	use_llvm=1
-	echo "Using Zyc-Clang from $HOME/zyc-clang/bin"
+	echo "Using ZyC-Clang from $HOME/ZyC-clang/bin"
 elif command -v clang >/dev/null 2>&1; then
 	use_llvm=1
 	echo "Using Clang from $(command -v clang)"
@@ -27,7 +27,7 @@ export base_build_cmd
 cd "$krnl_top" || exit
 
 # These values must be changed for forks!
-declare -r krnl_defconfig_url="https://github.com/SO-TS/android_kernel_xiaomi_sm8250"
+declare -r krnl_defconfig_url="https://github.com/ymdzq/kernel_xiaomi_sm8250_mod"
 declare -r krnl_defconfig_head=$(git -C "${krnl_config_dir}" rev-parse HEAD)
 
 declare -r soc="kona"
