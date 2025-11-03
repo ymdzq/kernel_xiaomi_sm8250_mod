@@ -281,12 +281,11 @@ else
     scripts/config --file out/.config -d KSU
 fi
 
-
 scripts/config --file out/.config \
     --set-str STATIC_USERMODEHELPER_PATH /system/bin/micd \
-    -e PERF_CRITICAL_RT_TASK	\
-    -e SF_BINDER		\
-    -e OVERLAY_FS		\
+    -e PERF_CRITICAL_RT_TASK \
+    -e SF_BINDER \
+    -e OVERLAY_FS \
     -d DEBUG_FS \
     -e MIGT \
     -e MIGT_ENERGY_MODEL \
@@ -298,7 +297,6 @@ scripts/config --file out/.config \
     -e PERF_HUMANTASK \
     -d LTO_CLANG \
     -d LOCALVERSION_AUTO \
-    -e SF_BINDER \
     -e XIAOMI_MIUI \
     -d MI_MEMORY_SYSFS \
     -e TASK_DELAY_ACCT \
@@ -309,7 +307,7 @@ scripts/config --file out/.config \
     -e PERF_HELPER \
     -e BOOTUP_RECLAIM \
     -e MI_RECLAIM \
-    -e RTMM \
+    -e RTMM
 
 make $MAKE_ARGS -j$(nproc)
 
