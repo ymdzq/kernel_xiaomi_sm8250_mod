@@ -81,7 +81,7 @@ KSU_VERSION=$2
 TARGET_SYSTEM=$3
 
 echo "TARGET_DEVICE: $TARGET_DEVICE"
-KSU_ENABLE=$([ "$KSU_VERSION" == "ksu" ] && echo 1 || echo 0)
+KSU_ENABLE=$([[ "$KSU_VERSION" == "ksu" || "$KSU_VERSION" == "rksu" ]] && echo 1 || echo 0)
 
 # KernelSU setup
 case "$KSU_VERSION" in
@@ -90,6 +90,11 @@ case "$KSU_VERSION" in
         KSU_ZIP_STR=SukiSU
         echo "SukiSU is enabled"
         curl -LSs "https://github.com/SukiSU-Ultra/SukiSU-Ultra/raw/refs/heads/susfs-main/kernel/setup.sh" | bash -s susfs-main
+        ;;
+    rksu)
+        KSU_ZIP_STR=RKSU
+        echo "RKSU is enabled"
+        curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/susfs-rksu-master/kernel/setup.sh" | bash -s susfs-rksu-master
         ;;
     *)
         KSU_ZIP_STR=NoKernelSU
@@ -247,7 +252,7 @@ Image_Repack() {
     fi
 
     # KPM Patch
-    if [[ "$KPM_ENABLE" -eq 1 ]]; then
+    if [[ "$KPM_ENABLE" -eq 1 && "$KSU_VERSION" == "ksu" ]]; then
         Patch_KPM
     fi
 
