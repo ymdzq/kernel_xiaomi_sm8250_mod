@@ -174,6 +174,10 @@ Join ApartTUSITU's QQ Group: [700675046](https://qm.qq.com/q/Md7nXA3Toa).
      ```
      bash build.sh TARGET_DEVICE ksu
      ```
+   - 只为MIUI构建并使用 KernelSU:  
+     ```
+     bash build.sh TARGET_DEVICE ksu miui
+     ```
 
    示例:  
    - lmi (Redmi K30 Pro/POCO F2 Pro) 不使用 KernelSU:  
@@ -183,6 +187,10 @@ Join ApartTUSITU's QQ Group: [700675046](https://qm.qq.com/q/Md7nXA3Toa).
    - umi (Xiaomi 10) 使用 KernelSU:  
      ```
      bash build.sh umi ksu
+     ```
+   - umi (Xiaomi 10) 不使用 KernelSU，只为MIUI构建:  
+     ```
+     bash build.sh umi noksu miui
      ```
 
    另外，`buildall.sh` 可一次性为所有设备构建。  
@@ -225,6 +233,10 @@ Join ApartTUSITU's QQ Group: [700675046](https://qm.qq.com/q/Md7nXA3Toa).
      ```
      bash build.sh TARGET_DEVICE ksu
      ```
+   - Only Build For MIUI, With KernelSU:  
+     ```
+     bash build.sh TARGET_DEVICE ksu miui
+     ```
 
    Example:  
    - lmi (Redmi K30 Pro/POCO F2 Pro) without KernelSU:  
@@ -234,6 +246,10 @@ Join ApartTUSITU's QQ Group: [700675046](https://qm.qq.com/q/Md7nXA3Toa).
    - umi (Xiaomi 10) with KernelSU:  
      ```
      bash build.sh umi ksu
+     ```
+   - umi (Xiaomi 10) without KernelSU, Only Build For MIUI:  
+     ```
+     bash build.sh umi noksu miui
      ```
 
    Additionally, `buildall.sh` can build for all supported devices at once.  
