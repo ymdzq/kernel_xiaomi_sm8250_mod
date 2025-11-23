@@ -25,12 +25,16 @@ on:
       ksu:
         description: 'Enable KernelSU (SukiSU & SUSFS)'
         required: true
-        type: boolean
-        default: true
+        default: 'ksu'
+        type: choice
+        options:
+          - 'ksu'
+          - 'rksu'
+          - 'noksu'
 
 jobs:
   build:
-    name: Build Kernel for ${{ inputs.device }} (${{ ( github.event.inputs.ksu == 'true' && 'KSU' ) || 'NoKSU' }})
+    name: Build Kernel for ${{ inputs.device }} (${{ ( github.event.inputs.ksu == 'noksu' && 'NoKSU' ) || github.event.inputs.ksu }})
     runs-on: ubuntu-latest
 
     steps:
@@ -74,17 +78,24 @@ jobs:
       run: |
         chmod +x build.sh
         
-        if [ "${{ inputs.ksu }}" == "true" ]; then
+        case "${{ inputs.ksu }}" in
+          "ksu")
           echo "Building with KernelSU..."
           bash build.sh ${{ inputs.device }} ksu
-        else
+            ;;
+          "rksu")
+          echo "Building with KernelSU legacy..."
+          bash build.sh ${{ inputs.device }} rksu
+            ;;
+          "noksu")
           echo "Building without KernelSU..."
           bash build.sh ${{ inputs.device }}
-        fi
+            ;;
+        esac
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v6
       with:
-        name: Kernel-${{ inputs.device }}-${{ ( github.event.inputs.ksu == 'true' && 'KSU' ) || 'NoKSU' }}-${{ github.run_number }}
+        name: Kernel-${{ inputs.device }}-${{ ( github.event.inputs.ksu == 'noksu' && 'NoKSU' ) || github.event.inputs.ksu }}-${{ github.run_number }}
         path: ./*.zip
         if-no-files-found: error
