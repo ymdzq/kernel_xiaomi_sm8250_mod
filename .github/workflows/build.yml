@@ -22,13 +22,14 @@ on:
           - dagu
           - pipa
       include_ksu:
-        description: '是否包含KSU'
+        description: '选择KSU版本'
         required: true
-        default: 'true'
+        default: 'ksu'
         type: choice
         options:
-          - 'true'
-          - 'false'
+          - 'ksu'
+          - 'rksu'
+          - 'noksu'
 
 jobs:
   build:
@@ -68,11 +69,17 @@ jobs:
 
     - name: Build kernel
       run: |
-        if [ "${{ github.event.inputs.include_ksu }}" = "true" ]; then
-          bash build.sh ${{ github.event.inputs.device }} ksu
-        else
-          bash build.sh ${{ github.event.inputs.device }}
-        fi
+        case "${{ github.event.inputs.include_ksu }}" in
+          "ksu")
+            bash build.sh ${{ github.event.inputs.device }} ksu
+            ;;
+          "rksu")
+            bash build.sh ${{ github.event.inputs.device }} rksu
+            ;;
+          "noksu")
+            bash build.sh ${{ github.event.inputs.device }}
+            ;;
+        esac
 
     - name: Show ccache stats
       run: ccache -s
@@ -80,7 +87,7 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ github.event.inputs.device }}${{ github.event.inputs.include_ksu == 'true' && '-ksu' || '' }}-kernel
+        name: ${{ github.event.inputs.device }}-${{ github.event.inputs.include_ksu == 'noksu' && 'vanilla' || github.event.inputs.include_ksu }}-kernel
         path: |
           *.zip
           out/arch/arm64/boot/Image

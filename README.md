@@ -163,9 +163,17 @@ Join Starwing's QQ Group: **459094061**
      ```
      bash build.sh TARGET_DEVICE ksu
      ```
+   - 不使用SukiSU而使用 Rissu's KernelSU:  
+     ```
+     bash build.sh TARGET_DEVICE rksu
+     ```
    - 只为MIUI构建并使用 KernelSU:  
      ```
      bash build.sh TARGET_DEVICE ksu miui
+     ```
+   - 只为类原生构建并使用 Rissu's KernelSU:  
+     ```
+     bash build.sh TARGET_DEVICE rksu aosp
      ```
 
    示例:  
@@ -222,9 +230,17 @@ Join Starwing's QQ Group: **459094061**
      ```
      bash build.sh TARGET_DEVICE ksu
      ```
+   - Without SukiSU, But With Rissu's KernelSU:  
+     ```
+     bash build.sh TARGET_DEVICE rksu
+     ```
    - Only Build For MIUI, With KernelSU:  
      ```
      bash build.sh TARGET_DEVICE ksu miui
+     ```
+   - Only Build For AOSP, With Rissu's KernelSU:  
+     ```
+     bash build.sh TARGET_DEVICE rksu aosp
      ```
 
    Example:  
