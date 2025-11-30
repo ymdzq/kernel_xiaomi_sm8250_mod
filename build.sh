@@ -221,11 +221,9 @@ SET_CONFIG() {
 
     if [ "$KSU_ENABLE" -eq 1 ]; then
         scripts/config --file out/.config -e KSU
-        scripts/config --file out/.config -e KSU_MANUAL_HOOK
         scripts/config --file out/.config -e KSU_SUSFS
     else
         scripts/config --file out/.config -d KSU
-        scripts/config --file out/.config -d KSU_MANUAL_HOOK
         scripts/config --file out/.config -d KSU_SUSFS
     fi
 
