@@ -89,7 +89,7 @@ case "$KSU_VERSION" in
         KPM_ENABLE=1
         KSU_ZIP_STR=SukiSU
         echo "SukiSU is enabled"
-        curl -LSs "https://github.com/SukiSU-Ultra/SukiSU-Ultra/raw/refs/heads/susfs-main/kernel/setup.sh" | bash -s susfs-main
+        curl -LSs "https://github.com/SukiSU-Ultra/SukiSU-Ultra/raw/refs/heads/builtin/kernel/setup.sh" | bash -s builtin
         ;;
     rksu)
         KSU_ZIP_STR=RKSU
