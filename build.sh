@@ -6,7 +6,7 @@
 # - [.github/workflows/Build_Kernel.yml] by yspbwx2010
 # Many thanks to their authors for the inspiration.
 
-set -e
+# set -e
 
 TOOLCHAIN_PATH=$HOME/ZyC-clang/bin
 GIT_COMMIT_ID=$(git rev-parse --short=8 HEAD)
@@ -101,6 +101,58 @@ case "$KSU_VERSION" in
         echo "KSU is disabled"
         ;;
 esac
+
+# ==========================================
+# SUSFS 2.0.00 补丁处理
+# ==========================================
+apply_susfs_patch() {
+    local PATCH_URL="https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd/blob/mainline/Patches/Patch/susfs_upgrade_to_2000_4.19.patch"
+    local PATCH_FILE="susfs_upgrade_to_2000_4.19.patch"
+    
+    echo "========================================"
+    echo "[+] Starting SUSFS 2.0.00 patch process"
+    echo "========================================"
+
+    # 下载补丁
+    echo "[+] Downloading SUSFS patch..."
+    if ! curl -LSs "${PATCH_URL}?raw=true" -o "$PATCH_FILE"; then
+        echo "[!] Failed to download patch file"
+        return 1
+    fi
+
+    # 应用补丁
+    echo "[+] Applying SUSFS patch..."
+    if ! patch -p1 --batch --forward --quiet < "$PATCH_FILE"; then
+        echo "[!] Patch application failed"
+        return 2
+    fi
+    
+    echo "[+] SUSFS patch applied successfully"
+    rm -f "$PATCH_FILE"
+    find . -type f \( -name "*.rej" -o -name "*.orig" \) -delete
+    return 0
+}
+
+# 补丁失败处理
+apply_susfs_patch
+PATCH_EXIT_CODE=$?
+if [ "$PATCH_EXIT_CODE" -eq 1 ] || [ "$PATCH_EXIT_CODE" -eq 2 ]; then
+    echo "========================================"
+    echo "[!] Patch process failed, starting recovery"
+    echo "========================================"
+    git checkout -- . || echo "[!] Warning: Failed to revert some files"
+    rm -f "susfs_upgrade_to_2000_4.19.patch"
+    find . -type f \( -name "*.rej" -o -name "*.orig" \) -delete
+    echo "[+] Cherry-picking commit 47ddc50..."
+    git cherry-pick 47ddc50 || {
+        echo "[!] Cherry-pick failed! Please check if commit 47ddc50 exists"
+        exit 1
+    }
+fi
+
+echo "========================================"
+echo "[+] SUSFS patch process finished"
+echo "========================================"
 
 echo "Cleaning..."
 rm -rf out/
