@@ -100,6 +100,54 @@ else
     echo "KSU is disabled"
 fi
 
+# ==========================================
+# 集成 KernelSU 补丁处理
+# ==========================================
+execute_ksu_patch_scripts() {
+    local INLINE_HOOK_SCRIPT_URL="https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd/blob/mainline/Patches/susfs_inline_hook_patches.sh?raw=true"
+    local BACKPORT_SCRIPT_URL="https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd/blob/mainline/Patches/backport_patches.sh?raw=true"
+    local INLINE_HOOK_SCRIPT="susfs_inline_hook_patches.sh"
+    local BACKPORT_SCRIPT="backport_patches.sh"
+
+    echo "========================================"
+    echo "[+] Starting ksu-patch scripts execution"
+    echo "========================================"
+
+    # 1. 下载susfs_inline_hook_patches.sh
+    echo "[+] Downloading ${INLINE_HOOK_SCRIPT}..."
+    if ! curl -LSs --connect-timeout 10 "${INLINE_HOOK_SCRIPT_URL}" -o "${INLINE_HOOK_SCRIPT}"; then
+        echo "[!] Failed to download ${INLINE_HOOK_SCRIPT}"
+        exit 1
+    fi
+
+    # 执行susfs_inline_hook_patches.sh
+    echo "[+] Executing ${INLINE_HOOK_SCRIPT}..."
+    if ! bash "${INLINE_HOOK_SCRIPT}"; then
+        echo "[!] Failed to execute ${INLINE_HOOK_SCRIPT}"
+        exit 1
+    fi
+
+    # 2. 下载backport_patches.sh
+    echo "[+] Downloading ${BACKPORT_SCRIPT}..."
+    if ! curl -LSs --connect-timeout 10 "${BACKPORT_SCRIPT_URL}" -o "${BACKPORT_SCRIPT}"; then
+        echo "[!] Failed to download ${BACKPORT_SCRIPT}"
+        exit 1
+    fi
+
+    # 执行backport_patches.sh
+    echo "[+] Executing ${BACKPORT_SCRIPT}..."
+    if ! bash "${BACKPORT_SCRIPT}"; then
+        echo "[!] Failed to execute ${BACKPORT_SCRIPT}"
+        exit 1
+    fi
+
+    rm -f "${INLINE_HOOK_SCRIPT}" "${BACKPORT_SCRIPT}"
+    echo "[+] ksu-patch scripts executed successfully"
+}
+
+# 调用新增的预补丁脚本执行函数
+execute_ksu_patch_scripts
+
 echo "Integrating Baseband-guard..."
 curl -LSs "https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh" | bash
 
