@@ -30,6 +30,11 @@ on:
           - 'ksu'
           - 'rksu'
           - 'noksu'
+      enable_susfs:
+        description: '启用SUSFS功能'
+        type: boolean
+        required: true
+        default: true
 
 jobs:
   build:
@@ -69,6 +74,12 @@ jobs:
 
     - name: Build kernel
       run: |
+        if [ "${{ github.event.inputs.enable_susfs }}" = "false" ]; then
+          sed -i 's/SUSFS_ENABLE=1/SUSFS_ENABLE=0/' build.sh
+          echo "SUSFS disabled"
+        else
+          echo "SUSFS enabled"
+        fi
         case "${{ github.event.inputs.include_ksu }}" in
           "ksu")
             bash build.sh ${{ github.event.inputs.device }} ksu
@@ -87,7 +98,7 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ github.event.inputs.device }}-${{ github.event.inputs.include_ksu == 'noksu' && 'vanilla' || github.event.inputs.include_ksu }}-kernel
+        name: ${{ github.event.inputs.device }}-${{ github.event.inputs.include_ksu == 'noksu' && 'vanilla' || github.event.inputs.include_ksu }}${{ github.event.inputs.enable_susfs == 'false' && '-nosusfs' || '' }}-kernel
         path: |
           *.zip
           out/arch/arm64/boot/Image
