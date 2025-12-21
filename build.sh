@@ -77,6 +77,7 @@ clang --version
 # Initialize variables
 KERNEL_SRC=$(pwd)
 KPM_ENABLE=0
+SUSFS_ENABLE=1
 KSU_VERSION=$2
 TARGET_SYSTEM=$3
 
@@ -321,10 +322,21 @@ SET_CONFIG() {
 
     if [ "$KSU_ENABLE" -eq 1 ]; then
         scripts/config --file out/.config -e KSU
-        scripts/config --file out/.config -e KSU_SUSFS
     else
         scripts/config --file out/.config -d KSU
+    fi
+
+    if [[ "$KSU_ENABLE" -eq 1 && "$SUSFS_ENABLE" -eq 1 ]]; then
+        scripts/config --file out/.config -e KSU_SUSFS
+    else
         scripts/config --file out/.config -d KSU_SUSFS
+    fi
+
+    if [[ "$SUSFS_ENABLE" -eq 1 && "$KSU_VERSION" == "ksu" ]]; then
+        scripts/config --file out/.config -d KSU_MANUAL_HOOK
+        scripts/config --file out/.config -e KSU_NONE_HOOK
+    else
+        scripts/config --file out/.config -e KSU_MANUAL_HOOK
     fi
 
     # Config KPM
