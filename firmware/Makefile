@@ -30,6 +30,9 @@ fw-shipped-$(CONFIG_TOUCHSCREEN_NT36523_HOSTDL_SPI) += novatek_ts_fw_k81.bin nov
 fw-shipped-$(CONFIG_TOUCHSCREEN_FOCALTECH) += focaltech_ts_fw.bin
 fw-shipped-$(CONFIG_TOUCHSCREEN_HIMAX_CHIPSET) += Himax_firmware.bin
 fw-shipped-$(CONFIG_TOUCHSCREEN_NT36532_HOSTDL_SPI) += novatek_nt36532_m82_fw_csot.bin novatek_nt36532_m82_mp_csot.bin novatek_nt36532_m82_fw_tm.bin novatek_nt36532_m82_mp_tm.bin
+fw-shipped-$(CONFIG_TOUCHSCREEN_NT36523_HOSTDL_SPI) += novatek_nt36523_k81_fw01_R.bin
+fw-shipped-$(CONFIG_TOUCHSCREEN_NT36523_HOSTDL_SPI) += novatek_nt36523_k81a_fw01_R.bin
+fw-shipped-$(CONFIG_TOUCHSCREEN_NT36523_HOSTDL_SPI) += novatek_nt36523_k81a_fw02_R.bin
 
 fw-shipped-all := $(fw-shipped-y) $(fw-shipped-m) $(fw-shipped-)
 
