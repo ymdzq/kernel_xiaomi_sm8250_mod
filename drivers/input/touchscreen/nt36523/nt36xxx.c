@@ -156,6 +156,7 @@ static struct tp_common_ops double_tap_ops = {
 static void release_pen_event(void);
 static int disable_pen_input_device(bool disable);
 static bool pen_update = false;
+static bool nvt_game_mode = false;
 
 #ifdef CONFIG_TOUCHSCREEN_COMMON
 static ssize_t pen_enable_show(struct kobject *kobj, struct kobj_attribute *attr,
@@ -217,6 +218,37 @@ static ssize_t pen_update_store(struct kobject *kobj, struct kobj_attribute *att
 static struct tp_common_ops pen_update_ops = {
 	.show = pen_update_show,
 	.store = pen_update_store,
+};
+
+static ssize_t nvt_game_mode_show(struct kobject *kobj,
+	struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", nvt_game_mode);
+}
+
+static ssize_t nvt_game_mode_store(struct kobject *kobj, struct kobj_attribute *attr,
+			 const char *buf, size_t count)
+{
+	int rc, val;
+
+	rc = kstrtoint(buf, 10, &val);
+	if (rc)
+		return -EINVAL;
+
+	nvt_game_mode = !!val;
+	if (nvt_game_mode) {
+		ts->fw_name = ts->config_array[ts->panel_index].nvt_fw_R_name;
+	} else {
+		ts->fw_name = ts->config_array[ts->panel_index].nvt_fw_name;
+	}
+
+	pr_info("[mi-pad]: switch_game_firmware fw-name: %s\n", ts->fw_name);
+	return count;
+}
+
+static struct tp_common_ops game_mode_ops = {
+	.show = nvt_game_mode_show,
+	.store = nvt_game_mode_store,
 };
 #endif
 
@@ -1365,6 +1397,14 @@ static int32_t nvt_parse_dt(struct device *dev)
 			NVT_LOG("Unable to read mp pen name\n");
 		} else {
 			NVT_LOG("mp_pen_name: %s", config_info->nvt_mp_pen_name);
+		}
+
+		ret = of_property_read_string(temp, "novatek,fw-R-name",
+					      &config_info->nvt_fw_R_name);
+		if (ret && (ret != -EINVAL)) {
+			NVT_LOG("Unable to read fw R name\n");
+		} else {
+			NVT_LOG("fw_R_name: %s", config_info->nvt_fw_R_name);
 		}
 
 		config_info++;
@@ -3273,6 +3313,13 @@ static int32_t nvt_ts_probe(struct spi_device *client)
 	if (ts->debugfs) {
 		debugfs_create_file("switch_state", 0660, ts->debugfs, ts, &tpdbg_ops);
 		debugfs_create_file("touch_boost", 0660, ts->debugfs, ts, &nvt_touch_test_fops);
+	}
+#endif
+
+#ifdef CONFIG_TOUCHSCREEN_COMMON
+	ret = tp_common_set_game_mode_ops(&game_mode_ops);
+	if (ret < 0) {
+		NVT_ERR("Failed to create game mode node err=%d\n", ret);
 	}
 #endif
 

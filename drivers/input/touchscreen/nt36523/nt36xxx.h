@@ -133,6 +133,7 @@ struct nvt_config_info {
 	const char *nvt_mp_name;
 	const char *nvt_fw_pen_name;
 	const char *nvt_mp_pen_name;
+	const char *nvt_fw_R_name;
 	const char *nvt_limit_name;
 };
 
@@ -228,6 +229,9 @@ struct nvt_ts_data {
 	struct work_struct resume_work;
 #ifndef NVT_SAVE_TESTDATA_IN_FILE
 	void *testdata;
+#endif
+#ifdef CONFIG_TOUCHSCREEN_COMMON
+	bool nvt_game_mode;
 #endif
 };
 
