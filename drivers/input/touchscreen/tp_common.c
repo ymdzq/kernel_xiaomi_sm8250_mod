@@ -19,6 +19,7 @@ TS_ENABLE_FOPS(fod_status)
 TS_ENABLE_FOPS(reversed_keys)
 TS_ENABLE_FOPS(pen_enable)
 TS_ENABLE_FOPS(pen_update)
+TS_ENABLE_FOPS(game_mode)
 
 static int __init tp_common_init(void)
 {
