@@ -13,9 +13,17 @@ jobs:
       fail-fast: false
       matrix:
         device: [psyche, thyme, umi, munch, lmi, cmi, cas, apollo, alioth, elish, enuma, dagu, pipa]
-        ksu_enabled: [true, false]
+        
+        # 配置矩阵：ksu类型和susfs是否启用
+        ksu_config: [
+          {type: "none"},
+          {type: "ksu", susfs: false},
+          {type: "ksu", susfs: true},
+          {type: "rksu", susfs: false},
+          {type: "rksu", susfs: true}
+        ]
 
-    name: Build ${{ matrix.device }} (${{ matrix.ksu_enabled && 'KSU' || 'NoKSU' }})
+    name: Build ${{ matrix.device }} ${{ matrix.ksu_config.type }} ${{ matrix.ksu_config.susfs != null && (matrix.ksu_config.susfs && 'SUSFS' || 'NoSUSFS') || '' }}
 
     steps:
       - name: Checkout Source
@@ -47,19 +55,81 @@ jobs:
           wget -q https://github.com/ZyCromerZ/Clang/releases/download/22.0.0git-20250924-release/Clang-22.0.0git-20250924.tar.gz
           tar -zxvf Clang-22.0.0git-20250924.tar.gz
 
+      - name: Modify SUSFS_ENABLE in build.sh (KSU/RKSU only)
+        # 对于KSU/RKSU版本，根据配置修改build.sh中的SUSFS_ENABLE设置
+        run: |
+          if [ "${{ matrix.ksu_config.type }}" != "none" ]; then
+            if [ "${{ matrix.ksu_config.susfs }}" = "false" ]; then
+              # 将SUSFS_ENABLE=1替换为SUSFS_ENABLE=0
+              sed -i 's/SUSFS_ENABLE=1/SUSFS_ENABLE=0/g' build.sh
+              echo "SUSFS_ENABLE set to 0"
+            else
+              # 确保SUSFS_ENABLE设置为1（虽然默认就是1）
+              sed -i 's/SUSFS_ENABLE=0/SUSFS_ENABLE=1/g' build.sh
+              echo "SUSFS_ENABLE set to 1"
+            fi
+            
+            # 显示修改后的设置确认
+            echo "Current SUSFS_ENABLE setting in build.sh:"
+            grep "SUSFS_ENABLE=" build.sh
+          else
+            echo "No KSU version, skipping SUSFS_ENABLE modification"
+          fi
+
       - name: Run Build Script
         run: |
           chmod +x build.sh
-          if [ "${{ matrix.ksu_enabled }}" = "true" ]; then
+          if [ "${{ matrix.ksu_config.type }}" = "none" ]; then
+            # 不启用KSU的版本
+            bash build.sh ${{ matrix.device }}
+          elif [ "${{ matrix.ksu_config.type }}" = "ksu" ]; then
+            # 启用KSU的版本
             bash build.sh ${{ matrix.device }} ksu
           else
-            bash build.sh ${{ matrix.device }}
+            # 启用RKSU的版本
+            bash build.sh ${{ matrix.device }} rksu
           fi
+
+      - name: Rename Artifacts
+        # 重命名生成的文件以便区分不同配置
+        run: |
+          # 获取生成的zip文件
+          for zipfile in *.zip; do
+            if [ -f "$zipfile" ]; then
+              # 解析原始文件名，替换KSU_ZIP_STR部分，添加SUSFS状态
+              if [ "${{ matrix.ksu_config.type }}" = "ksu" ]; then
+                if [ "${{ matrix.ksu_config.susfs }}" = "true" ]; then
+                  # SukiSU -> SukiSU-SUSFS
+                  newname=$(echo "$zipfile" | sed 's/_SukiSU_/_SukiSU-SUSFS_/g')
+                else
+                  # SukiSU -> SukiSU-NoSUSFS
+                  newname=$(echo "$zipfile" | sed 's/_SukiSU_/_SukiSU-NoSUSFS_/g')
+                fi
+              elif [ "${{ matrix.ksu_config.type }}" = "rksu" ]; then
+                if [ "${{ matrix.ksu_config.susfs }}" = "true" ]; then
+                  # RKSU -> RKSU-SUSFS
+                  newname=$(echo "$zipfile" | sed 's/_RKSU_/_RKSU-SUSFS_/g')
+                else
+                  # RKSU -> RKSU-NoSUSFS
+                  newname=$(echo "$zipfile" | sed 's/_RKSU_/_RKSU-NoSUSFS_/g')
+                fi
+              else
+                # 无KSU版本，保持原样
+                newname="$zipfile"
+              fi
+              
+              # 重命名文件
+              if [ "$newname" != "$zipfile" ]; then
+                mv "$zipfile" "$newname"
+                echo "Renamed: $zipfile -> $newname"
+              fi
+            fi
+          done
 
       - name: Upload Local Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Kernel-artifacts-${{ matrix.device }}-${{ matrix.ksu_enabled && 'KSU' || 'NoKSU' }}
+          name: Kernel-${{ matrix.device }}-${{ matrix.ksu_config.type }}${{ matrix.ksu_config.susfs != null && format('-{0}', matrix.ksu_config.susfs && 'SUSFS' || 'NoSUSFS') || '' }}
           path: ./*.zip
 
   release:
@@ -73,7 +143,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: all_kernels
-          pattern: Kernel-artifacts-*
+          pattern: Kernel-*
           merge-multiple: true
 
       - name: Prepare Release Info
@@ -96,10 +166,20 @@ jobs:
             - **包含设备 / Devices:** psyche, thyme, umi, munch, lmi, cmi, cas, apollo, alioth, elish, enuma, dagu, pipa
             
             ---
-            **分类指南 / Instruction:**
+            **版本说明 / Version Guide:**
+            
+            **KSU类型 / KSU Type:**
+            - **NoKernelSU**: 不包含 KernelSU 和 SuSFS 补丁。
+            - **SukiSU-SUSFS**: 已集成 ReSukiSU 和 SuSFS 补丁。
+            - **RKSU-NoSUSFS**: 已集成 KernelSU legacy 未集成 SuSFS 补丁。
+            
+            **SUSFS功能 / SUSFS Feature (仅KSU/RKSU版本):**
+            - **-SUSFS**: 启用SUSFS功能
+            - **-NoSUSFS**: 禁用SUSFS功能
+            
+            **ROM兼容性 / ROM Compatibility:**
             - **MIUI**: 适用于小米官方或基于小米官方修改的 ROM。
             - **AOSP**: 适用于类原生 ROM (LineageOS, Pixel Experience 等)。
-            - **SukiSU-SUSFS**: 已集成 ReSukiSU 和 SuSFS 补丁。
           files: all_kernels/*.zip
 
       - name: Send Files to Telegram
