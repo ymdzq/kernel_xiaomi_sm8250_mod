@@ -18,6 +18,7 @@ TS_ENABLE_FOPS(double_tap)
 TS_ENABLE_FOPS(fod_status)
 TS_ENABLE_FOPS(reversed_keys)
 TS_ENABLE_FOPS(pen_enable)
+TS_ENABLE_FOPS(pen_update)
 
 static int __init tp_common_init(void)
 {

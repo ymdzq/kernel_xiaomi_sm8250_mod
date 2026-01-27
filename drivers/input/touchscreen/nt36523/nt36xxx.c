@@ -185,6 +185,40 @@ static struct tp_common_ops pen_enable_ops = {
 	.store = pen_enable_store,
 };
 
+static ssize_t pen_update_show(struct kobject *kobj, struct kobj_attribute *attr,
+			char *buf)
+{
+	return sprintf(buf, "%d\n", pen_update);
+}
+
+static ssize_t pen_update_store(struct kobject *kobj, struct kobj_attribute *attr,
+			 const char *buf, size_t count)
+{
+	int rc, val;
+
+	rc = kstrtoint(buf, 10, &val);
+	if (rc)
+		return -EINVAL;
+
+	pen_update = !!val;
+	if (pen_update) {
+		ts->fw_name = ts->config_array[ts->panel_index].nvt_fw_pen_name;
+		ts->mp_name = ts->config_array[ts->panel_index].nvt_mp_pen_name;
+	} else {
+		ts->fw_name = ts->config_array[ts->panel_index].nvt_fw_name;
+		ts->mp_name = ts->config_array[ts->panel_index].nvt_mp_name;
+	}
+
+	pr_info("[mi-pen]: switch_pen_firmware fw-name: %s\n", ts->fw_name);
+	pr_info("[mi-pen]: switch_pen_firmware mp-name: %s\n", ts->mp_name);
+	return count;
+}
+
+static struct tp_common_ops pen_update_ops = {
+	.show = pen_update_show,
+	.store = pen_update_store,
+};
+#endif
 
 #ifdef CONFIG_MTK_SPI
 const struct mt_chip_conf spi_ctrdata = {
@@ -1315,6 +1349,22 @@ static int32_t nvt_parse_dt(struct device *dev)
 			NVT_LOG("Unable to read mp name\n");
 		} else {
 			NVT_LOG("mp_name: %s", config_info->nvt_mp_name);
+		}
+
+		ret = of_property_read_string(temp, "novatek,fw-pen-name",
+					      &config_info->nvt_fw_pen_name);
+		if (ret && (ret != -EINVAL)) {
+			NVT_LOG("Unable to read fw pen name\n");
+		} else {
+			NVT_LOG("fw_pen_name: %s", config_info->nvt_fw_pen_name);
+		}
+
+		ret = of_property_read_string(temp, "novatek,mp-pen-name",
+					      &config_info->nvt_mp_pen_name);
+		if (ret && (ret != -EINVAL)) {
+			NVT_LOG("Unable to read mp pen name\n");
+		} else {
+			NVT_LOG("mp_pen_name: %s", config_info->nvt_mp_pen_name);
 		}
 
 		config_info++;
@@ -3033,6 +3083,7 @@ static int32_t nvt_ts_probe(struct spi_device *client)
 		}
 #ifdef CONFIG_TOUCHSCREEN_COMMON
 		ret = tp_common_set_pen_enable_ops(&pen_enable_ops);
+		ret = tp_common_set_pen_update_ops(&pen_update_ops);
 		if (ret < 0) {
 			NVT_ERR("Failed to create pen node err=%d\n", ret);
 		}

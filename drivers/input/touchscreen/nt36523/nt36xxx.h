@@ -131,6 +131,8 @@ struct nvt_config_info {
 	u8 glass_vendor;
 	const char *nvt_fw_name;
 	const char *nvt_mp_name;
+	const char *nvt_fw_pen_name;
+	const char *nvt_mp_pen_name;
 	const char *nvt_limit_name;
 };
 
