@@ -12,7 +12,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        device: [psyche, thyme, umi, munch, lmi, cmi, cas, apollo, alioth, elish, enuma, dagu, pipa]
+        # 设备列表 - 目前只编译以下设备
+        device: [elish, enuma, dagu, pipa]
         
         # 配置矩阵：ksu类型和susfs是否启用
         ksu_config: [
@@ -163,7 +164,7 @@ jobs:
             
             - **构建日期 / Build Date:** ${{ env.BUILD_DATE }}
             - **提交哈希 / Commit SHA:** `${{ env.GIT_SHA }}`
-            - **包含设备 / Devices:** psyche, thyme, umi, munch, lmi, cmi, cas, apollo, alioth, elish, enuma, dagu, pipa
+            - **包含设备 / Devices:** elish, enuma, dagu, pipa
             
             ---
             **版本说明 / Version Guide:**
