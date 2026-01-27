@@ -90,12 +90,24 @@ case "$KSU_VERSION" in
         KPM_ENABLE=1
         KSU_ZIP_STR=SukiSU
         echo "SukiSU is enabled"
-        curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s builtin
+        if [ "$SUSFS_ENABLE" -eq 1 ]; then
+            echo "Using ReSukiSU builtin (SUSFS enabled)"
+            curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s builtin
+        else
+            echo "Using ReSukiSU new-manager (SUSFS disabled)"
+            curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s new-manager
+        fi
         ;;
     rksu)
         KSU_ZIP_STR=RKSU
         echo "RKSU is enabled"
-        curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/susfs-rksu-master/kernel/setup.sh" | bash -s susfs-rksu-master
+        if [ "$SUSFS_ENABLE" -eq 1 ]; then
+            echo "Using RKSU susfs-rksu-master (SUSFS enabled)"
+            curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s susfs-rksu-master
+        else
+            echo "Using RKSU main (SUSFS disabled)"
+            curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s main
+        fi
         ;;
     *)
         KSU_ZIP_STR=NoKernelSU
@@ -107,44 +119,51 @@ esac
 # 集成 KernelSU 补丁处理
 # ==========================================
 execute_ksu_patch_scripts() {
-    local INLINE_HOOK_SCRIPT_URL="https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd/blob/mainline/Patches/susfs_inline_hook_patches.sh?raw=true"
+    # 根据 SUSFS_ENABLE 决定使用哪个补丁脚本
+    if [ "$SUSFS_ENABLE" -eq 1 ]; then
+        local HOOK_SCRIPT_URL="https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd/blob/mainline/Patches/susfs_inline_hook_patches.sh?raw=true"
+        local HOOK_SCRIPT="susfs_inline_hook_patches.sh"
+        echo "Using susfs_inline_hook_patches.sh (SUSFS enabled)"
+    else
+        local HOOK_SCRIPT_URL="https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd/blob/mainline/Patches/syscall_hook_patches.sh?raw=true"
+        local HOOK_SCRIPT="syscall_hook_patches.sh"
+        echo "Using syscall_hook_patches.sh (SUSFS disabled)"
+    fi
+    
     local BACKPORT_SCRIPT_URL="https://github.com/JackA1ltman/NonGKI_Kernel_Build_2nd/blob/mainline/Patches/backport_patches.sh?raw=true"
-    local INLINE_HOOK_SCRIPT="susfs_inline_hook_patches.sh"
     local BACKPORT_SCRIPT="backport_patches.sh"
 
     echo "========================================"
     echo "[+] Starting ksu-patch scripts execution"
     echo "========================================"
 
-    # 1. 下载susfs_inline_hook_patches.sh
-    echo "[+] Downloading ${INLINE_HOOK_SCRIPT}..."
-    if ! curl -LSs --connect-timeout 10 "${INLINE_HOOK_SCRIPT_URL}" -o "${INLINE_HOOK_SCRIPT}"; then
-        echo "[!] Failed to download ${INLINE_HOOK_SCRIPT}"
+    # 1. 下载并执行钩子补丁脚本
+    echo "[+] Downloading ${HOOK_SCRIPT}..."
+    if ! curl -LSs --connect-timeout 10 "${HOOK_SCRIPT_URL}" -o "${HOOK_SCRIPT}"; then
+        echo "[!] Failed to download ${HOOK_SCRIPT}"
         exit 1
     fi
 
-    # 执行susfs_inline_hook_patches.sh
-    echo "[+] Executing ${INLINE_HOOK_SCRIPT}..."
-    if ! bash "${INLINE_HOOK_SCRIPT}"; then
-        echo "[!] Failed to execute ${INLINE_HOOK_SCRIPT}"
+    echo "[+] Executing ${HOOK_SCRIPT}..."
+    if ! bash "${HOOK_SCRIPT}"; then
+        echo "[!] Failed to execute ${HOOK_SCRIPT}"
         exit 1
     fi
 
-    # 2. 下载backport_patches.sh
+    # 2. 下载并执行 backport_patches.sh
     echo "[+] Downloading ${BACKPORT_SCRIPT}..."
     if ! curl -LSs --connect-timeout 10 "${BACKPORT_SCRIPT_URL}" -o "${BACKPORT_SCRIPT}"; then
         echo "[!] Failed to download ${BACKPORT_SCRIPT}"
         exit 1
     fi
 
-    # 执行backport_patches.sh
     echo "[+] Executing ${BACKPORT_SCRIPT}..."
     if ! bash "${BACKPORT_SCRIPT}"; then
         echo "[!] Failed to execute ${BACKPORT_SCRIPT}"
         exit 1
     fi
 
-    rm -f "${INLINE_HOOK_SCRIPT}" "${BACKPORT_SCRIPT}"
+    rm -f "${HOOK_SCRIPT}" "${BACKPORT_SCRIPT}"
     echo "[+] ksu-patch scripts executed successfully"
 }
 
