@@ -136,3 +136,7 @@ kernel/configs/android-*.cfg
 
 out/
 *Zone.Identifier
+
+anykernel/
+Baseband-guard/
+KernelSU/
