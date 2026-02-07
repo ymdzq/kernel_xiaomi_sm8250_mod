@@ -90,24 +90,19 @@ case "$KSU_VERSION" in
         KPM_ENABLE=1
         KSU_ZIP_STR=SukiSU
         echo "SukiSU is enabled"
-        if [ "$SUSFS_ENABLE" -eq 1 ]; then
-            echo "Using ReSukiSU builtin (SUSFS enabled)"
-            curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s builtin
-        else
-            echo "Using ReSukiSU new-manager (SUSFS disabled)"
-            curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s new-manager
-        fi
+        curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash
         ;;
     rksu)
         KSU_ZIP_STR=RKSU
         echo "RKSU is enabled"
-        if [ "$SUSFS_ENABLE" -eq 1 ]; then
-            echo "Using RKSU susfs-rksu-master (SUSFS enabled)"
-            curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s susfs-rksu-master
-        else
+        #if [ "$SUSFS_ENABLE" -eq 1 ]; then
+            #echo "Using RKSU susfs-rksu-master (SUSFS enabled)"
+            #curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s susfs-rksu-master
+        #else
             echo "Using RKSU main (SUSFS disabled)"
+            SUSFS_ENABLE=0
             curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s main
-        fi
+        #fi
         ;;
     *)
         KSU_ZIP_STR=NoKernelSU
