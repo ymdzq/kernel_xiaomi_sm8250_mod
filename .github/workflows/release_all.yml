@@ -18,10 +18,8 @@ jobs:
         # 配置矩阵：ksu类型和susfs是否启用
         ksu_config: [
           {type: "none"},
-          {type: "ksu", susfs: false},
           {type: "ksu", susfs: true},
-          {type: "rksu", susfs: false},
-          {type: "rksu", susfs: true}
+          {type: "rksu", susfs: false}
         ]
 
     name: Build ${{ matrix.device }} ${{ matrix.ksu_config.type }} ${{ matrix.ksu_config.susfs != null && (matrix.ksu_config.susfs && 'SUSFS' || 'NoSUSFS') || '' }}
@@ -99,21 +97,21 @@ jobs:
             if [ -f "$zipfile" ]; then
               # 解析原始文件名，替换KSU_ZIP_STR部分，添加SUSFS状态
               if [ "${{ matrix.ksu_config.type }}" = "ksu" ]; then
-                if [ "${{ matrix.ksu_config.susfs }}" = "true" ]; then
+                # if [ "${{ matrix.ksu_config.susfs }}" = "true" ]; then
                   # SukiSU -> SukiSU-SUSFS
                   newname=$(echo "$zipfile" | sed 's/_SukiSU_/_SukiSU-SUSFS_/g')
-                else
+                # else
                   # SukiSU -> SukiSU-NoSUSFS
-                  newname=$(echo "$zipfile" | sed 's/_SukiSU_/_SukiSU-NoSUSFS_/g')
-                fi
-              elif [ "${{ matrix.ksu_config.type }}" = "rksu" ]; then
-                if [ "${{ matrix.ksu_config.susfs }}" = "true" ]; then
+                  # newname=$(echo "$zipfile" | sed 's/_SukiSU_/_SukiSU-NoSUSFS_/g')
+                # fi
+              # elif [ "${{ matrix.ksu_config.type }}" = "rksu" ]; then
+                # if [ "${{ matrix.ksu_config.susfs }}" = "true" ]; then
                   # RKSU -> RKSU-SUSFS
-                  newname=$(echo "$zipfile" | sed 's/_RKSU_/_RKSU-SUSFS_/g')
-                else
+                  # newname=$(echo "$zipfile" | sed 's/_RKSU_/_RKSU-SUSFS_/g')
+                # else
                   # RKSU -> RKSU-NoSUSFS
-                  newname=$(echo "$zipfile" | sed 's/_RKSU_/_RKSU-NoSUSFS_/g')
-                fi
+                  # newname=$(echo "$zipfile" | sed 's/_RKSU_/_RKSU-NoSUSFS_/g')
+                # fi
               else
                 # 无KSU版本，保持原样
                 newname="$zipfile"
@@ -172,7 +170,7 @@ jobs:
             **KSU类型 / KSU Type:**
             - **NoKernelSU**: 不包含 KernelSU 和 SuSFS 补丁。
             - **SukiSU-SUSFS**: 已集成 ReSukiSU 和 SuSFS 补丁。
-            - **RKSU-NoSUSFS**: 已集成 KernelSU legacy 未集成 SuSFS 补丁。
+            - **RKSU**: 已集成 KernelSU legacy 未集成 SuSFS 补丁。
             
             **SUSFS功能 / SUSFS Feature (仅KSU/RKSU版本):**
             - **-SUSFS**: 启用SUSFS功能
