@@ -292,6 +292,7 @@ SET_CONFIG() {
 
     if [ "$KSU_ENABLE" -eq 1 ]; then
         scripts/config --file out/.config -e KSU
+        scripts/config --file out/.config -e KSU_MULTI_MANAGER_SUPPORT
     else
         scripts/config --file out/.config -d KSU
     fi
