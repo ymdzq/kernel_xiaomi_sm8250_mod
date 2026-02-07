@@ -31,11 +31,6 @@ on:
           - 'ksu'
           - 'rksu'
           - 'noksu'
-      enable_susfs:
-        description: '启用SUSFS功能'
-        type: boolean
-        required: true
-        default: true
 
 jobs:
   build:
@@ -82,14 +77,7 @@ jobs:
     - name: Build Kernel
       run: |
         chmod +x build.sh
-
-        if [ "${{ inputs.enable_susfs }}" = "false" ]; then
-          sed -i 's/SUSFS_ENABLE=1/SUSFS_ENABLE=0/' build.sh
-          echo "SUSFS disabled"
-        else
-          echo "SUSFS enabled"
-        fi
-
+        
         case "${{ inputs.ksu }}" in
           "ksu")
           echo "Building with KernelSU..."
@@ -108,6 +96,6 @@ jobs:
     - name: Upload Artifacts
       uses: actions/upload-artifact@v6
       with:
-        name: Kernel-${{ inputs.device }}-${{ ( github.event.inputs.ksu == 'noksu' && 'NoKSU' ) || github.event.inputs.ksu }}${{ github.event.inputs.enable_susfs == 'false' && '-nosusfs' || '' }}-${{ github.run_number }}
+        name: Kernel-${{ inputs.device }}-${{ ( github.event.inputs.ksu == 'noksu' && 'NoKSU' ) || github.event.inputs.ksu }}-${{ github.run_number }}
         path: ./*.zip
         if-no-files-found: error
